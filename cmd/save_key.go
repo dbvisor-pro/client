@@ -6,6 +6,7 @@ package cmd
 import (
 	"fmt"
 
+	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/processes/savekey"
 	"github.com/spf13/cobra"
 )
 
@@ -20,7 +21,11 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("saveKey called")
+		var result string = savekey.Execute()
+
+		if result != "" {
+			fmt.Println("The public key has been saved successfully")
+		}
 	},
 }
 

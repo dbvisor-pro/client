@@ -4,8 +4,7 @@ Copyright © 2024 Bridge Digital
 package cmd
 
 import (
-	"fmt"
-
+	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/processes/download"
 	"github.com/spf13/cobra"
 )
 
@@ -20,7 +19,7 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("download called")
+		download.Execute(nil, nil)
 	},
 }
 

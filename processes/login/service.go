@@ -8,7 +8,10 @@ import (
 	"net/http"
 	"strings"
 
+	saveKey "gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/processes/savekey"
 	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services"
+	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/response"
+	workspacePac "gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/workspace"
 	"github.com/howeyc/gopass"
 	"github.com/spf13/cobra"
 )
@@ -20,7 +23,7 @@ func Execute(cmd *cobra.Command) string {
 		"password": "",
 	}
 
-	var token, username, workspace string
+	var token, username, workspace, keyFileName string
 
 	//reader := bufio.NewReader(os.Stdin)
 
@@ -49,18 +52,28 @@ PASSWORD:
 	}
 
 	token = jwtToken(credentials)
-	workspace = getWorkspace(token)
+	workspace = workspacePac.Workspace(token)
 
-	fmt.Println(workspace)
+	//fmt.Println(workspace)
 
 	if len(token) == 0 || len(workspace) == 0 {
 		return ""
 	}
 
-	if !services.IsEnvFileExist() {
-		services.CreateEnvFile(services.ConfigData())
+	configData := map[string]string{
+		"token":     token,
+		"workspace": workspace,
+		"keyName":   "",
+	}
+
+	if !services.IsEnvFileExist(false) {
+		services.CreateEnvFile(services.ConfigData(configData))
 	} else {
-		//services.WriteEnvFile(services.ConfigData())
+		keyFileName = saveKey.Execute()
+
+		configData["keyName"] = keyFileName
+
+		services.WriteEnvFile(services.ConfigData(configData))
 	}
 
 	return "You logged in successfully"
@@ -68,13 +81,13 @@ PASSWORD:
 
 // Get token from server
 func jwtToken(credentials map[string]string) string {
-	enc_creds, err := json.Marshal(credentials)
+	credsInJson, err := json.Marshal(credentials)
 	if err != nil {
 		fmt.Println("Error encoding to json:", err)
 		return ""
 	}
 
-	req, err := http.NewRequest("POST", services.WebServiceAuthUrl(), bytes.NewBuffer(enc_creds))
+	req, err := http.NewRequest("POST", services.WebServiceAuthUrl(), bytes.NewBuffer(credsInJson))
 	if err != nil {
 		fmt.Println("Something wrong with POST request data:", err)
 		return ""
@@ -103,89 +116,16 @@ func jwtToken(credentials map[string]string) string {
 		return ""
 	}
 
-	var c_data map[string]string
+	var configData map[string]string
 
-	c_err := json.Unmarshal(data, &c_data)
-	if c_err != nil {
-		fmt.Println("Error decoding from json:", c_err)
+	configErr := json.Unmarshal(data, &configData)
+	if configErr != nil {
+		response.WrongResponseObserver(data)
 		return ""
 	}
 
-	if len(c_data["token"]) > 0 {
-		return c_data["token"]
-	}
-
-	return ""
-}
-
-func getWorkspace(token string) string {
-	req, err := http.NewRequest("GET", services.WebServiceProfileUrl(), nil)
-	if err != nil {
-		fmt.Println("Something wrong with POST request data:", err)
-		return ""
-	}
-
-	req.Header.Set("Accept", "application/json")
-	req.Header.Set("Authorization", "Bearer "+token)
-
-	client := &http.Client{}
-
-	resp, err := client.Do(req)
-	if err != nil {
-		fmt.Println("Invalid token:", err)
-		return ""
-	}
-
-	if resp == nil {
-		return fmt.Sprint(http.StatusBadRequest)
-	}
-
-	defer resp.Body.Close()
-
-	data, err := io.ReadAll(resp.Body)
-	//fmt.Print("returned: ", string(data))
-	if err != nil {
-		fmt.Println("Error:", err)
-		return ""
-	}
-
-	type Data struct {
-		Identifier string   `json:"identifier"`
-		Workspaces []string `json:"workspaces"`
-	}
-
-	// Unmarshal the JSON data into the struct
-	var w_data Data
-	all_workspaces := map[int]string{}
-
-	w_err := json.Unmarshal([]byte(data), &w_data)
-	if w_err != nil {
-		fmt.Println("Error decoding from json:", w_err)
-		return ""
-	}
-
-	if len(w_data.Workspaces) > 0 {
-	WORKSPACE:
-		fmt.Println("Select workspace: ")
-
-		for k, workspace := range w_data.Workspaces {
-			fmt.Println(k+1, ": ", workspace)
-			all_workspaces[k+1] = workspace
-		}
-
-		var selected_workspace int
-
-		fmt.Scanln(&selected_workspace)
-
-		if selected_workspace > 0 {
-			return all_workspaces[selected_workspace]
-		} else {
-			fmt.Println("You must select workspace")
-			goto WORKSPACE
-		}
-	} else {
-		fmt.Println("You don't assigned to any workspace")
-
+	if len(configData["token"]) > 0 {
+		return configData["token"]
 	}
 
 	return ""

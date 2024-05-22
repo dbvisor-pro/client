@@ -22,35 +22,41 @@ type Config struct {
 	KeyFile      string `json:"key_file"`
 }
 
+type ConfigDataService interface {
+	ConfigData()
+}
+
+// Config file operations
 func EnvFilePath() string {
 	return EnvFileName
 }
 
-func ConfigData() []Config {
+func ConfigData(userData map[string]string) []Config {
 	data := []Config{
 		{
-			ServiceToken: "",
-			Workspace:    "",
-			KeyFile:      "",
+			ServiceToken: userData["token"],
+			Workspace:    userData["workspace"],
+			KeyFile:      userData["keyName"],
 		},
 	}
 
 	return data
 }
 
-func IsEnvFileExist() bool {
+func IsEnvFileExist(msgSupress bool) bool {
 	var result bool = true
 
-	c_dir, err_dir := currentAppDir()
-
-	if err_dir != nil {
-		fmt.Printf("Cannot get current APP directory: %W", err_dir)
+	configDir, errDir := CurrentAppDir()
+	if errDir != nil {
+		fmt.Printf("Cannot get current APP directory: %W.\n", errDir)
 		return false
 	}
 
-	_, err := os.ReadFile(c_dir + "/.env")
+	_, err := os.ReadFile(configDir + "/" + EnvFileName)
 	if err != nil {
-		fmt.Printf("Env file not found. Please run: %s install", AppName)
+		if !msgSupress {
+			fmt.Printf("Env file not found. Please run: %s install.\n", AppName)
+		}
 		result = false
 	}
 
@@ -58,16 +64,16 @@ func IsEnvFileExist() bool {
 }
 
 func CreateEnvFile(config []Config) {
-	c_dir, err_dir := currentAppDir()
-
-	if err_dir != nil {
-		fmt.Printf("Cannot get current APP directory: %W", err_dir)
+	configDir, errDir := CurrentAppDir()
+	if errDir != nil {
+		fmt.Printf("Cannot get current APP directory: %W.\n", errDir)
 		return
 	}
 
-	file, err := os.Create(c_dir + "/" + EnvFileName)
+	file, err := os.Create(configDir + "/" + EnvFileName)
 	if err != nil {
 		fmt.Println("Cannot create file:", err)
+		return
 	}
 
 	defer file.Close()
@@ -76,23 +82,103 @@ func CreateEnvFile(config []Config) {
 	err = encoder.Encode(config)
 	if err != nil {
 		fmt.Println("Cannot write config data to file:", err)
-		panic(err)
+		return
 	}
 }
 
-func WriteEnvFile() {
+func WriteEnvFile(config []Config) {
+	/* configDir, errDir := currentAppDir()
+	if errDir != nil {
+		fmt.Printf("Cannot get current APP directory: %W", errDir)
+		return
+	} */
 
+	CreateEnvFile(config)
 }
 
+//End Config file operations
+
+// Key file operations
+func IsKeyFileExist(keyname string) bool {
+	var result bool = true
+
+	configDir, errDir := CurrentAppDir()
+	if errDir != nil {
+		fmt.Printf("Cannot get current APP directory: %W.\n", errDir)
+		return false
+	}
+
+	_, err := os.ReadFile(configDir + "/" + keyname + ".pub")
+	if err != nil {
+		fmt.Printf("Key %s.pub file not found. A %s.pub key has been created.\n", keyname, keyname)
+		result = false
+	}
+
+	return result
+}
+
+func CreateKeyPubFile(keyname string) string {
+	configDir, errDir := CurrentAppDir()
+	if errDir != nil {
+		fmt.Printf("Cannot get current APP directory: %W.\n", errDir)
+		return ""
+	}
+
+	keyFileName := keyname + ".pub"
+
+	file, err := os.Create(configDir + "/" + keyFileName)
+	if err != nil {
+		fmt.Println("Cannot create key file:", err)
+		return ""
+	}
+
+	defer file.Close()
+
+	return keyFileName
+}
+
+func WriteKeyPubFile(keyData string, keyFileName string) string {
+	configDir, errDir := CurrentAppDir()
+	if errDir != nil {
+		fmt.Printf("Cannot get current APP directory: %W.\n", errDir)
+		return ""
+	}
+
+	data := []byte(keyData)
+
+	keyFileName = keyFileName + ".pub"
+
+	err := os.WriteFile(configDir+"/"+keyFileName, data, 0664)
+	if err != nil {
+		fmt.Println("Cannot write key file:", err)
+	}
+
+	return keyFileName
+}
+
+//End Key file operations
+
+// API login_check
 func WebServiceAuthUrl() string {
 	return fmt.Sprintf("%s/%s/%s", WebServiceUrl, WebServiceApiUrl, "login_check")
 }
 
+// API profile
 func WebServiceProfileUrl() string {
 	return fmt.Sprintf("%s/%s/%s", WebServiceUrl, WebServiceApiUrl, "profile")
 }
 
-func currentAppDir() (string, error) {
+// API database list
+func WebServiceDatabaseListUrl() string {
+	return fmt.Sprintf("%s/%s/%s", WebServiceUrl, WebServiceApiUrl, "databases")
+}
+
+// API database dump
+func WebServiceDatabaseDumpUrl() string {
+	return fmt.Sprintf("%s/%s/%s", WebServiceUrl, WebServiceApiUrl, "database_dumps")
+}
+
+func CurrentAppDir() (string, error) {
 	ex, err := os.Executable()
 
 	dir := filepath.Dir(ex)
