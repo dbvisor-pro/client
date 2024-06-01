@@ -11,7 +11,7 @@ import (
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List commands",
-	Long:  ``,
+	Long:  `Display a list of all commands.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		rootCmd.Help()
 	},

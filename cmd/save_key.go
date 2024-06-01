@@ -13,15 +13,10 @@ import (
 // saveKeyCmd represents the saveKey command
 var saveKeyCmd = &cobra.Command{
 	Use:   "save-key",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Add public key!",
+	Long:  `Creating/editing a public key.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		var result string = savekey.Execute()
+		var result string = savekey.Execute(false)
 
 		if result != "" {
 			fmt.Println("The public key has been saved successfully")

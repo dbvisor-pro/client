@@ -6,22 +6,15 @@ import (
 	"path/filepath"
 
 	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services"
+	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/envfile"
 )
 
 func Execute() {
 
-	if services.IsEnvFileExist(true) {
+	if envfile.IsEnvFileExist(true) {
 		fmt.Println("Application has already installed")
 		return
 	} else {
-		configData := map[string]string{
-			"token":     "",
-			"workspace": "",
-			"keyName":   "",
-		}
-
-		services.CreateEnvFile(services.ConfigData(configData))
-
 		addToBash()
 	}
 
