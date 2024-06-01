@@ -268,11 +268,6 @@ func downloadFile(link string, encryptedData []byte, fullFilePath string) {
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		fmt.Printf("Bad status: %s \n", resp.Status)
-		return
-	}
-
-	if resp.StatusCode != http.StatusOK {
 		if resp.StatusCode == http.StatusUnauthorized {
 			fmt.Printf("bad status: %s. Your token has expired. Use the login command to update it \n", resp.Status)
 			return
