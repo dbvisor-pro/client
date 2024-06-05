@@ -11,7 +11,6 @@ const (
 	WebServiceUrl    string = "https://db-manager.bridge2.digital"
 	WebServiceApiUrl string = "api"
 	AppName          string = "db-manager"
-	ServiceToken     string = "SERVICE_TOKEN"
 	EnvFileName      string = ".env.json"
 	PubKeyExt        string = ".pem"
 )
