@@ -121,7 +121,7 @@ func Execute(dbUid, dumpUid string) {
 	dumpDbData := map[string]string{
 		"dbuuid":   dbUid,
 		"dumpuuid": dumpUid,
-		"dumpname": DefaultDumpDBName + "_" + selectedWorkspace + "_" + dbName + "_" + currentTime.Format("2000-01-01 00:00:00"),
+		"dumpname": DefaultDumpDBName + "_" + selectedWorkspace + "_" + dbName + "_" + currentTime.Format("2006-01-02"),
 		"dumppath": defaultDumpPath,
 	}
 
@@ -185,13 +185,7 @@ func download(dumpDbData map[string]string, encryptedData []byte, token string) 
 			saveDumpPath = strings.TrimRight(saveDumpPath, "/")
 			saveDumpPath += "/"
 		} else {
-			saveDumpPath, err = helper.DefaultDumpPath()
-			if err != nil {
-				fmt.Println(predefined.BuildError("Error:"), err)
-				return
-			}
-
-			saveDumpPath = pathTrimer(saveDumpPath, configDir)
+			saveDumpPath = "current"
 		}
 
 		prompt := &survey.Input{
@@ -201,6 +195,10 @@ func download(dumpDbData map[string]string, encryptedData []byte, token string) 
 		}
 
 		survey.AskOne(prompt, &saveDumpPath)
+
+		if saveDumpPath == "current" {
+			saveDumpPath = "./"
+		}
 
 		saveDumpPath = pathTrimer(saveDumpPath, configDir)
 

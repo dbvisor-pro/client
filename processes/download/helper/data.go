@@ -6,7 +6,6 @@ package helper
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 	"sort"
 	"strings"
 
@@ -19,10 +18,9 @@ import (
 )
 
 const (
-	StatusReady              string = "ready"
-	StatusReadyWithError     string = "ready_with_error"
-	DBStatus                 string = "enabled"
-	DefaultDBDumpsFolderName        = "DBVisor DB Dumps"
+	StatusReady          string = "ready"
+	StatusReadyWithError string = "ready_with_error"
+	DBStatus             string = "enabled"
 )
 
 func GetServerData(dbUid string, token string) map[string]string {
@@ -114,21 +112,6 @@ func GetDbUidByDump(dumpUid string, token string) string {
 	}
 
 	return dbUid
-}
-
-func DefaultDumpPath() (string, error) {
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		return "", fmt.Errorf(predefined.BuildError("can not get current HOME user directory: %W"), err)
-	}
-
-	var appDir string = homeDir + "/" + DefaultDBDumpsFolderName
-
-	if err := os.MkdirAll(appDir, os.ModePerm); err != nil {
-		return "", fmt.Errorf(predefined.BuildError("can not get default DB dumps directory: %W"), err)
-	}
-
-	return appDir, err
 }
 
 func GetDumpUid(dbUid string, token string, selectedWorkspace string) (string, error) {
