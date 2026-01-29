@@ -8,9 +8,9 @@ import (
 	"os"
 	"strings"
 
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services"
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/envfile"
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/predefined"
+	"github.com/dbvisor-pro/client/services"
+	"github.com/dbvisor-pro/client/services/envfile"
+	"github.com/dbvisor-pro/client/services/predefined"
 )
 
 func Execute(dumpPath string, serviceUrl string) {
@@ -53,7 +53,7 @@ func Execute(dumpPath string, serviceUrl string) {
 
 func createDumpPathDir(dumpPath string) error {
 	if err := os.MkdirAll(dumpPath, os.ModePerm); err != nil {
-		return fmt.Errorf(predefined.BuildError("can not get entered dump directory: %W"), err)
+		return fmt.Errorf(predefined.BuildError("can not get entered dump directory: %w"), err)
 	}
 
 	return nil

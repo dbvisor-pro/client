@@ -4,7 +4,7 @@ Copyright © 2024 Bridge Digital
 package cmd
 
 import (
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/processes/install"
+	"github.com/dbvisor-pro/client/processes/install"
 	"github.com/spf13/cobra"
 )
 
@@ -19,16 +19,6 @@ var installCmd = &cobra.Command{
 }
 
 func init() {
-	// Disable temporary install command
-	//rootCmd.AddCommand(installCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// installCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// installCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// Install command is disabled - uncomment to enable
+	// rootCmd.AddCommand(installCmd)
 }

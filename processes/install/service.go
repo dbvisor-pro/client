@@ -8,8 +8,8 @@ import (
 	"os"
 	"os/exec"
 
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services"
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/predefined"
+	"github.com/dbvisor-pro/client/services"
+	"github.com/dbvisor-pro/client/services/predefined"
 )
 
 const DestinationPath = "/usr/local/bin/"
@@ -23,7 +23,7 @@ func Execute() {
 
 	configDir, errDir := services.CurrentAppDir()
 	if errDir != nil {
-		fmt.Printf(predefined.BuildError("Cannot get current APP directory: %W.\n"), errDir)
+		fmt.Printf(predefined.BuildError("Cannot get current APP directory: %w.\n"), errDir)
 		return
 	}
 

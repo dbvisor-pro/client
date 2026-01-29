@@ -7,11 +7,11 @@ import (
 	"fmt"
 	"strings"
 
-	saveKey "gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/processes/savekey"
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services"
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/envfile"
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/predefined"
-	workspacePac "gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/workspace"
+	saveKey "github.com/dbvisor-pro/client/processes/savekey"
+	"github.com/dbvisor-pro/client/services"
+	"github.com/dbvisor-pro/client/services/envfile"
+	"github.com/dbvisor-pro/client/services/predefined"
+	workspacePac "github.com/dbvisor-pro/client/services/workspace"
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/spf13/cobra"
 )

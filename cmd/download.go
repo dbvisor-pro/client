@@ -4,7 +4,7 @@ Copyright © 2024 Bridge Digital
 package cmd
 
 import (
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/processes/download"
+	"github.com/dbvisor-pro/client/processes/download"
 	"github.com/spf13/cobra"
 )
 
@@ -25,14 +25,4 @@ func init() {
 	rootCmd.AddCommand(downloadCmd)
 	downloadCmd.Flags().String("dump-uid", "", "Enter DB Dump UID")
 	downloadCmd.Flags().String("db-uid", "", "Enter DB UID")
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// downloadCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// downloadCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

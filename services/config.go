@@ -11,7 +11,7 @@ import (
 	"fmt"
 	"os"
 
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/predefined"
+	"github.com/dbvisor-pro/client/services/predefined"
 )
 
 const (
@@ -97,13 +97,13 @@ func WebServiceDownLoadLinkUrl() string {
 func CurrentAppDir() (string, error) {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
-		return "", fmt.Errorf(predefined.BuildError("can not get current HOME user directory: %W"), err)
+		return "", fmt.Errorf(predefined.BuildError("can not get current HOME user directory: %w"), err)
 	}
 
 	var appDir string = homeDir + "/.dbvisor"
 
 	if err := os.MkdirAll(appDir, os.ModePerm); err != nil {
-		return "", fmt.Errorf(predefined.BuildError("can not get current app directory: %W"), err)
+		return "", fmt.Errorf(predefined.BuildError("can not get current app directory: %w"), err)
 	}
 
 	return appDir, err

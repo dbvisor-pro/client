@@ -1,4 +1,4 @@
-module gitea.bridge.digital/bridgedigital/db-manager-client-cli-go
+module github.com/dbvisor-pro/client
 
 go 1.22.3
 

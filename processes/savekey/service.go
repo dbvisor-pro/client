@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"strings"
 
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services"
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/envfile"
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/keypubfile"
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/predefined"
+	"github.com/dbvisor-pro/client/services"
+	"github.com/dbvisor-pro/client/services/envfile"
+	"github.com/dbvisor-pro/client/services/keypubfile"
+	"github.com/dbvisor-pro/client/services/predefined"
 	"github.com/AlecAivazis/survey/v2"
 	"golang.org/x/exp/maps"
 )
@@ -97,8 +97,6 @@ func reCreate() {
 
 	savedKeyName := savedServers[savedServersKeys[selectedServerIndex]].KeyFile
 
-keyNameAsk:
-
 	var keyName, keyData, currentServerName string
 
 	currentServerName = savedServersKeys[selectedServerIndex]
@@ -113,18 +111,21 @@ keyNameAsk:
 			return
 		}
 	} else {
-		prompt := &survey.Select{
-			Message: "Key file is already exists. Do you want to override existing file?",
-			Options: options,
+		// Loop until user confirms override or we handle the case
+		for {
+			prompt := &survey.Select{
+				Message: "Key file is already exists. Do you want to override existing file?",
+				Options: options,
+			}
+
+			survey.AskOne(prompt, &selectedOption)
+
+			if selectedOption == "Yes" {
+				keyName = savedKeyName
+				break
+			}
+			// If "No", keep asking (same behavior as goto)
 		}
-
-		survey.AskOne(prompt, &selectedOption)
-
-		if selectedOption == "No" {
-			goto keyNameAsk
-		}
-
-		keyName = savedKeyName
 	}
 
 	qKeyData := &survey.Question{

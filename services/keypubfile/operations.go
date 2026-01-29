@@ -8,8 +8,8 @@ import (
 	"os"
 	"strings"
 
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services"
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/predefined"
+	"github.com/dbvisor-pro/client/services"
+	"github.com/dbvisor-pro/client/services/predefined"
 )
 
 // Key file operations
@@ -18,7 +18,7 @@ func IsKeyFileExist(keyname string) bool {
 
 	configDir, errDir := services.CurrentAppDir()
 	if errDir != nil {
-		fmt.Printf(predefined.BuildError("Cannot get current APP directory: %W.\n"), errDir)
+		fmt.Printf(predefined.BuildError("Cannot get current APP directory: %w.\n"), errDir)
 		return false
 	}
 
@@ -39,7 +39,7 @@ func IsKeyFileExist(keyname string) bool {
 func CreateKeyPubFile(keyname string) string {
 	configDir, errDir := services.CurrentAppDir()
 	if errDir != nil {
-		fmt.Printf(predefined.BuildError("Cannot get current APP directory: %W.\n"), errDir)
+		fmt.Printf(predefined.BuildError("Cannot get current APP directory: %w.\n"), errDir)
 		return ""
 	}
 
@@ -65,7 +65,7 @@ func CreateKeyPubFile(keyname string) string {
 func WriteKeyPubFile(keyData string, keyFileName string) string {
 	configDir, errDir := services.CurrentAppDir()
 	if errDir != nil {
-		fmt.Printf(predefined.BuildError("Cannot get current APP directory: %W.\n"), errDir)
+		fmt.Printf(predefined.BuildError("Cannot get current APP directory: %w.\n"), errDir)
 		return ""
 	}
 
@@ -93,7 +93,7 @@ func ReadKeyPubFile(keyname string) string {
 	if IsKeyFileExist(keyname) {
 		configDir, errDir := services.CurrentAppDir()
 		if errDir != nil {
-			fmt.Printf(predefined.BuildError("Cannot get current APP directory: %W.\n"), errDir)
+			fmt.Printf(predefined.BuildError("Cannot get current APP directory: %w.\n"), errDir)
 			return ""
 		}
 
@@ -105,7 +105,7 @@ func ReadKeyPubFile(keyname string) string {
 
 		keyData, err := os.ReadFile(configDir + "/" + keyname + ext)
 		if err != nil {
-			fmt.Printf(predefined.BuildError("Cannot read the %s file: %W.\n"), keyname+ext, errDir)
+			fmt.Printf(predefined.BuildError("Cannot read the %s file: %w.\n"), keyname+ext, errDir)
 			return ""
 		}
 

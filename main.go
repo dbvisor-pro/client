@@ -3,7 +3,7 @@ Copyright © 2024 Bridge Digital
 */
 package main
 
-import "gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/cmd"
+import "github.com/dbvisor-pro/client/cmd"
 
 func main() {
 	cmd.Execute()

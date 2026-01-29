@@ -13,13 +13,13 @@ import (
 	"strings"
 	"time"
 
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/processes/download/helper"
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services"
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/encrypter"
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/envfile"
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/predefined"
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/request"
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/response"
+	"github.com/dbvisor-pro/client/processes/download/helper"
+	"github.com/dbvisor-pro/client/services"
+	"github.com/dbvisor-pro/client/services/encrypter"
+	"github.com/dbvisor-pro/client/services/envfile"
+	"github.com/dbvisor-pro/client/services/predefined"
+	"github.com/dbvisor-pro/client/services/request"
+	"github.com/dbvisor-pro/client/services/response"
 	"github.com/AlecAivazis/survey/v2"
 )
 
@@ -174,7 +174,7 @@ func download(dumpDbData map[string]string, encryptedData []byte, token string) 
 	if len(link) > 0 {
 		configDir, errDir := services.CurrentAppDir()
 		if errDir != nil {
-			fmt.Printf(predefined.BuildError("Cannot get current APP directory: %W.\n"), errDir)
+			fmt.Printf(predefined.BuildError("Cannot get current APP directory: %w.\n"), errDir)
 			return
 		}
 
@@ -223,11 +223,11 @@ func downloadFile(link string, encryptedData []byte, fullFilePath string) {
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
 
-	client := &http.Client{}
+	client := &http.Client{Timeout: 5 * time.Minute} // Longer timeout for file downloads
 
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Println(predefined.BuildError("Invalid credentials:"), err)
+		fmt.Println(predefined.BuildError("Request failed:"), err)
 		return
 	}
 

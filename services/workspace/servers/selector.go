@@ -4,7 +4,7 @@ Copyright © 2024 Bridge Digital
 package servers
 
 import (
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/util"
+	"github.com/dbvisor-pro/client/util"
 	"github.com/AlecAivazis/survey/v2"
 	"golang.org/x/exp/maps"
 )

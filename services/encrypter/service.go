@@ -12,8 +12,8 @@ import (
 	"fmt"
 	"strings"
 
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/keypubfile"
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/predefined"
+	"github.com/dbvisor-pro/client/services/keypubfile"
+	"github.com/dbvisor-pro/client/services/predefined"
 )
 
 func EncryptData(dbDumpData map[string]string, keyPubFileName string) []byte {

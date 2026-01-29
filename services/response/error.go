@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/predefined"
+	"github.com/dbvisor-pro/client/services/predefined"
 )
 
 type WrongData struct {

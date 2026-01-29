@@ -8,9 +8,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/predefined"
+	"github.com/dbvisor-pro/client/services/predefined"
 )
+
+const httpTimeout = 30 * time.Second
 
 func CreatePostRequest(data []byte, url string, token *string) ([]byte, error) {
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
@@ -30,11 +33,11 @@ func CreatePostRequest(data []byte, url string, token *string) ([]byte, error) {
 		errMsg = predefined.BuildError("Invalid credentials")
 	}
 
-	client := &http.Client{}
+	client := &http.Client{Timeout: httpTimeout}
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf(predefined.BuildError("invalid credentials: %w"), err)
+		return nil, fmt.Errorf(predefined.BuildError("request failed: %w"), err)
 	}
 
 	if resp.StatusCode != http.StatusOK {
@@ -67,11 +70,11 @@ func CreateGetRequest(url string, token *string) ([]byte, error) {
 		req.Header.Set("Authorization", "Bearer "+*token)
 	}
 
-	client := &http.Client{}
+	client := &http.Client{Timeout: httpTimeout}
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf(predefined.BuildError("invalid token: %w"), err)
+		return nil, fmt.Errorf(predefined.BuildError("request failed: %w"), err)
 	}
 
 	if resp.StatusCode != http.StatusOK {

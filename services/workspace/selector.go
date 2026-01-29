@@ -8,12 +8,13 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services"
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/predefined"
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/response"
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/token"
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/workspace/servers"
+	"github.com/dbvisor-pro/client/services"
+	"github.com/dbvisor-pro/client/services/predefined"
+	"github.com/dbvisor-pro/client/services/response"
+	"github.com/dbvisor-pro/client/services/token"
+	"github.com/dbvisor-pro/client/services/workspace/servers"
 	"github.com/AlecAivazis/survey/v2"
 	"golang.org/x/exp/maps"
 )
@@ -125,11 +126,11 @@ func getProfileData(token string) Data {
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("Authorization", "Bearer "+token)
 
-	client := &http.Client{}
+	client := &http.Client{Timeout: 30 * time.Second}
 
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Println(predefined.BuildError("Invalid token:"), err)
+		fmt.Println(predefined.BuildError("Request failed:"), err)
 		return workspaceData
 	}
 

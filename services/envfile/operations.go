@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"os"
 
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services"
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/predefined"
+	"github.com/dbvisor-pro/client/services"
+	"github.com/dbvisor-pro/client/services/predefined"
 	"golang.org/x/exp/maps"
 )
 
@@ -68,7 +68,7 @@ func IsEnvFileExist(msgSupress bool) bool {
 
 	configDir, errDir := services.CurrentAppDir()
 	if errDir != nil {
-		fmt.Printf(predefined.BuildError("Cannot get current APP directory: %W.\n"), errDir)
+		fmt.Printf(predefined.BuildError("Cannot get current APP directory: %w.\n"), errDir)
 		return false
 	}
 
@@ -86,7 +86,7 @@ func IsEnvFileExist(msgSupress bool) bool {
 func CreateEnvFile(config Config) {
 	configDir, errDir := services.CurrentAppDir()
 	if errDir != nil {
-		fmt.Printf(predefined.BuildError("Cannot get current APP directory: %W.\n"), errDir)
+		fmt.Printf(predefined.BuildError("Cannot get current APP directory: %w.\n"), errDir)
 		return
 	}
 
@@ -154,13 +154,13 @@ func WriteEnvFile(config Config) {
 
 	data, errData := json.Marshal(configFromFile)
 	if errData != nil {
-		fmt.Println(predefined.BuildError("Cannot encode config data: "), err)
+		fmt.Println(predefined.BuildError("Cannot encode config data: "), errData)
 		return
 	}
 
 	configDir, errDir := services.CurrentAppDir()
 	if errDir != nil {
-		fmt.Printf(predefined.BuildError("Cannot get current APP directory: %W.\n"), errDir)
+		fmt.Printf(predefined.BuildError("Cannot get current APP directory: %w.\n"), errDir)
 		return
 	}
 
@@ -180,17 +180,17 @@ func ReadEnvFile() (Config, error) {
 
 	configDir, errDir := services.CurrentAppDir()
 	if errDir != nil {
-		return config, fmt.Errorf(predefined.BuildError("cannot get current APP directory: %W"), errDir)
+		return config, fmt.Errorf(predefined.BuildError("cannot get current APP directory: %w"), errDir)
 	}
 
 	file, err := os.ReadFile(configDir + "/" + services.EnvFileName)
 	if err != nil {
-		return config, fmt.Errorf(predefined.BuildError("env file is not readable: %W"), errDir)
+		return config, fmt.Errorf(predefined.BuildError("env file is not readable: %w"), err)
 	}
 
 	err = json.Unmarshal(file, &config)
 	if err != nil {
-		return config, fmt.Errorf(predefined.BuildError("the settings record is not readable: %W"), errDir)
+		return config, fmt.Errorf(predefined.BuildError("the settings record is not readable: %w"), err)
 	}
 
 	return config, nil

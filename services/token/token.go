@@ -7,10 +7,10 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services"
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/predefined"
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/request"
-	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/response"
+	"github.com/dbvisor-pro/client/services"
+	"github.com/dbvisor-pro/client/services/predefined"
+	"github.com/dbvisor-pro/client/services/request"
+	"github.com/dbvisor-pro/client/services/response"
 )
 
 // Get token from server
