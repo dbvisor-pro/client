@@ -8,23 +8,21 @@ import (
 	"os"
 	"strings"
 
+	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services"
 	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/envfile"
 	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/predefined"
 )
 
-func Execute(dumpPath string) {
-	if len(strings.TrimSpace(dumpPath)) == 0 {
-		fmt.Println(predefined.BuildError("The download DB dumps path cannot be empty"))
+func Execute(dumpPath string, serviceUrl string) {
+	hasDumpPath := len(strings.TrimSpace(dumpPath)) > 0
+	hasServiceUrl := len(strings.TrimSpace(serviceUrl)) > 0
+
+	if !hasDumpPath && !hasServiceUrl {
+		fmt.Println(predefined.BuildError("Please provide at least one option: --dump-path (-d) or --url (-u)"))
 		return
 	}
 
 	if !envfile.IsEnvFileExist(false) {
-		return
-	}
-
-	errDumpPath := createDumpPathDir(dumpPath)
-	if errDumpPath != nil {
-		fmt.Println(errDumpPath)
 		return
 	}
 
@@ -34,10 +32,23 @@ func Execute(dumpPath string) {
 		return
 	}
 
-	savedConfig.DownloadDumpPath = dumpPath
-	envfile.WriteEnvFile(savedConfig)
+	if hasDumpPath {
+		errDumpPath := createDumpPathDir(dumpPath)
+		if errDumpPath != nil {
+			fmt.Println(errDumpPath)
+			return
+		}
+		savedConfig.DownloadDumpPath = dumpPath
+		fmt.Println(predefined.BuildOk("You have set the default path for database dumps"))
+	}
 
-	fmt.Println(predefined.BuildOk("You have set the default path for database dumps"))
+	if hasServiceUrl {
+		savedConfig.ServiceUrl = strings.TrimSpace(serviceUrl)
+		services.ResetConfigCache()
+		fmt.Println(predefined.BuildOk("You have set the service URL to: " + serviceUrl))
+	}
+
+	envfile.WriteEnvFile(savedConfig)
 }
 
 func createDumpPathDir(dumpPath string) error {

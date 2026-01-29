@@ -23,6 +23,7 @@ type Workspace struct {
 }
 
 type Config struct {
+	ServiceUrl       string               `json:"service_url"`
 	DownloadDumpPath string               `json:"dump_path"`
 	ServiceToken     string               `json:"token"`
 	CurrentWorkspace string               `json:"current_workspace"`
@@ -142,6 +143,10 @@ func WriteEnvFile(config Config) {
 
 	if len(config.DownloadDumpPath) > 0 {
 		configFromFile.DownloadDumpPath = config.DownloadDumpPath
+	}
+
+	if len(config.ServiceUrl) > 0 {
+		configFromFile.ServiceUrl = config.ServiceUrl
 	}
 
 	configFromFile.ServiceToken = config.ServiceToken

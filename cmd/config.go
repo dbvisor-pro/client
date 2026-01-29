@@ -11,18 +11,20 @@ import (
 // configCmd represents the config command
 var configCmd = &cobra.Command{
 	Use:   "config",
-	Short: "Set new path for saving dumps",
-	Long:  `Sets a new default path for saving database dumps`,
+	Short: "Configure application settings",
+	Long:  `Configure application settings including service URL and default path for saving database dumps`,
 	Run: func(cmd *cobra.Command, args []string) {
 		dumpPath, _ := cmd.Flags().GetString("dump-path")
+		serviceUrl, _ := cmd.Flags().GetString("url")
 
-		config.Execute(dumpPath)
+		config.Execute(dumpPath, serviceUrl)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(configCmd)
 	configCmd.Flags().StringP("dump-path", "d", "", "Set new path for saving dumps")
+	configCmd.Flags().StringP("url", "u", "", "Set service URL (e.g., https://app.dbvisor.pro)")
 
 	// Here you will define your flags and configuration settings.
 

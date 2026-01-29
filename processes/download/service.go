@@ -25,7 +25,7 @@ import (
 
 const (
 	DefaultDumpDBName string = "backup"
-	DefaultDumpDBExt  string = ".sql"
+	DefaultDumpDBExt  string = ".sql.gz"
 )
 
 func Execute(dbUid, dumpUid string) {

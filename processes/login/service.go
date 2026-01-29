@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	saveKey "gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/processes/savekey"
+	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services"
 	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/envfile"
 	"gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/predefined"
 	workspacePac "gitea.bridge.digital/bridgedigital/db-manager-client-cli-go/services/workspace"
@@ -16,6 +17,15 @@ import (
 )
 
 func Execute(cmd *cobra.Command) string {
+	// Check if service URL is configured, if not prompt for it
+	if !isServiceUrlConfigured() {
+		serviceUrl := promptForServiceUrl()
+		if len(serviceUrl) == 0 {
+			return ""
+		}
+		saveServiceUrl(serviceUrl)
+	}
+
 	credentials := map[string]string{
 		"username": "",
 		"password": "",
@@ -79,4 +89,65 @@ func Execute(cmd *cobra.Command) string {
 	envfile.WriteEnvFile(envfile.ConfigData(configData))
 
 	return predefined.BuildOk("You logged in successfully")
+}
+
+// isServiceUrlConfigured checks if service URL is already saved in config
+func isServiceUrlConfigured() bool {
+	if !envfile.IsEnvFileExist(true) {
+		return false
+	}
+
+	config, err := envfile.ReadEnvFile()
+	if err != nil {
+		return false
+	}
+
+	return len(strings.TrimSpace(config.ServiceUrl)) > 0
+}
+
+// promptForServiceUrl prompts user to enter service URL
+func promptForServiceUrl() string {
+	var serviceUrl string
+
+	qUrl := &survey.Question{
+		Prompt: &survey.Input{
+			Message: "Service URL:",
+			Default: services.DefaultWebServiceUrl,
+			Help:    "Enter the dbvisor service URL (e.g., https://app.dbvisor.pro)",
+		},
+		Validate: func(val interface{}) error {
+			if str, _ := val.(string); len(strings.TrimSpace(str)) == 0 {
+				return fmt.Errorf(predefined.BuildError("the Service URL cannot be empty"))
+			}
+			return nil
+		},
+	}
+
+	survey.AskOne(qUrl.Prompt, &serviceUrl, survey.WithValidator(qUrl.Validate))
+	return strings.TrimSpace(serviceUrl)
+}
+
+// saveServiceUrl saves the service URL to config file
+func saveServiceUrl(serviceUrl string) {
+	// Reset cache so new URL is used
+	services.ResetConfigCache()
+
+	if !envfile.IsEnvFileExist(true) {
+		// Create a minimal config with just the service URL
+		config := envfile.Config{
+			ServiceUrl: serviceUrl,
+			Data:       make(map[string]envfile.Workspace),
+		}
+		envfile.CreateEnvFile(config)
+		return
+	}
+
+	config, err := envfile.ReadEnvFile()
+	if err != nil {
+		fmt.Println(predefined.BuildError("Error reading config:"), err)
+		return
+	}
+
+	config.ServiceUrl = serviceUrl
+	envfile.WriteEnvFile(config)
 }
